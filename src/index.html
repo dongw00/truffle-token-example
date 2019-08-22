@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap"
+      rel="stylesheet"
+    />
+    <link href="./css/index.css" rel="stylesheet" />
+    <title>ICO project</title>
+  </head>
+
+  <body>
+    <div class="container">
+      <header class="mt-4">
+        <h1>ICO token sale</h1>
+        <h3>총 토큰 판매량</h3>
+      </header>
+
+      <div class="row mt-5">
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-header">
+              ICO 일정
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">현재 시각</h5>
+              <p id="now" class="card-text"></p>
+              <h5 class="card-title">판매 시작</h5>
+              <p id="start" class="card-text"></p>
+              <h5 class="card-title">판매 종료</h5>
+              <p id="deadline" class="card-text"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-header">
+              ICO token 구입
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">내 주소</h5>
+              <p id="my_account" class="cart-text"></p>
+
+              <div class="input-group mb-3">
+                <input
+                  id="eth"
+                  class="form-control"
+                  type="text"
+                  aria-describedby="ethereum-addon"
+                />
+                <div class="input-group-append">
+                  <span id="ethereum-addon" class="input-group-text">ETH</span>
+                </div>
+              </div>
+
+              <button type="button" class="btn btn-primary justify-content-end">
+                구입
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <div class="card">
+            <div class="card-header">
+              Token 정보
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">토큰 이름</h5>
+              <p id="token_name" class="cart-text"></p>
+
+              <h5 class="card-title">토큰 심볼</h5>
+              <p id="token_symbol" class="cart-text"></p>
+
+              <h5 class="card-title">총 발행량</h5>
+              <p id="token_total" class="cart-text"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"
+      integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/locale/ko.js"
+      integrity="sha256-qkVUOqyWLNnWgXE3Xd2HmUE9GQ/4Z6zRSk3P7JYAAOk="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/truffle-contract@3.0.6/dist/truffle-contract.min.js"></script>
+    <script defer src="./js/index.js"></script>
+  </body>
+</html>
