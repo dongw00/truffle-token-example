@@ -20,109 +20,60 @@
 
   <body>
     <div class="container">
-      <header class="row mt-3">
-        <div class="col-7">
-          <h1>ICO token sale</h1>
+      <div class="row">
+        <div class="col-12 mt-5">
+          <h1 class="text-center">DAPP TOKEN ICO SALE</h1>
+          <hr />
+          <br />
         </div>
-
-        <div class="col-2 mt-3">
-          <div class="card text-white bg-success">
-            <h5 class="card-header">
-              총 판매량
-            </h5>
-            <div class="card-body">
-              <p id="saleStatus"></p>
-            </div>
-          </div>
+        <div id="loader">
+          <p class="text-center">Loading...</p>
         </div>
-        <div class="col-2 mt-3 ml-2 mr-2">
-          <div class="card text-white bg-success">
-            <h5 class="card-header">
-              남은 수량
-            </h5>
-            <div class="card-body">
-              <p id="restStatus"></p>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div class="row mt-5">
-        <div class="col-sm-6 mt-4">
-          <div class="card">
-            <h5 class="card-header">
-              ICO 일정
-            </h5>
-            <div class="card-body">
-              <h5 class="card-title">현재 시각</h5>
-              <p id="now" class="card-text"></p>
-              <h5 class="card-title">판매 시작</h5>
-              <p id="start" class="card-text"></p>
-              <h5 class="card-title">판매 종료</h5>
-              <p id="deadline" class="card-text"></p>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-sm-6 mt-4">
-          <div class="card">
-            <div class="card-header">
-              ICO token 구입
-            </div>
-            <div class="card-body">
-              <h5 class="card-title">내 주소</h5>
-              <p id="my_account" class="cart-text"></p>
-
-              <div class="input-group mb-3">
+        <div id="content" class="text-center">
+          <p>
+            Introducing "Dapp Token" (Dapp)! Token price is
+            <span id="token-price"></span> Ether. <br />You currently have
+            <span id="dapp-balance"></span>dAPP.
+          </p>
+          <br />
+          <form onSubmit="App.buyTokens(); return false;" role="form">
+            <div class="form-group">
+              <div class="input-group input-group-lg">
                 <input
-                  id="eth"
+                  id="numberOfTokens"
                   class="form-control"
-                  type="text"
-                  aria-describedby="ethereum-addon"
+                  type="number"
+                  name="number"
+                  min="1"
+                  pattern="[0-9]"
+                  placeholder="10"
                 />
                 <div class="input-group-append">
-                  <span id="ethereum-addon" class="input-group-text">ETH</span>
+                  <span class="input-group-text">ETH</span>
                 </div>
+                <span class="input-group-btn">
+                  <button type="submit" class="btn btn-primary ml-2 btn-lg">
+                    Buy Tokens
+                  </button>
+                </span>
               </div>
-
-              <button id="invest" type="button" class="btn btn-primary">
-                구입
-              </button>
             </div>
+          </form>
+          <br />
+          <div class="progress">
+            <div
+              id="progress"
+              class="progress-bar progress-bar-striped active"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            ></div>
           </div>
-        </div>
-
-        <div class="col-sm-6 mt-4">
-          <div class="card">
-            <h5 class="card-header">
-              Token 정보
-            </h5>
-            <div class="card-body">
-              <h5 class="card-title">토큰 이름</h5>
-              <p id="token_name" class="cart-text"></p>
-
-              <h5 class="card-title">토큰 심볼</h5>
-              <p id="token_symbol" class="cart-text"></p>
-
-              <h5 class="card-title">총 발행량</h5>
-              <p id="token_total" class="cart-text"></p>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-sm-6 mt-4">
-          <div class="card">
-            <h5 class="card-header">
-              실시간 정보
-            </h5>
-            <div class="card-body">
-              <ul class="list-group">
-                <li class="list-group-item active">1번째</li>
-                <li class="list-group-item">2번째</li>
-                <li class="list-group-item">3번째</li>
-              </ul>
-            </div>
-          </div>
+          <p>
+            <span id="tokens-sold"></span> /
+            <span id="tokens-available"></span> tokens sold
+          </p>
+          <hr />
+          <p id="accountAddress"></p>
         </div>
       </div>
     </div>

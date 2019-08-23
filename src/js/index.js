@@ -1,6 +1,10 @@
 App = {
   web3: null,
   contracts: {},
+  account: '0x0',
+  loading: false,
+  tokenPrice: 0,
+  tokenAvailable: 750000,
 
   initWeb3: async function() {
     if (window.ethereum) {
@@ -30,35 +34,81 @@ App = {
     return App.initContract();
   },
 
-  initContract: async function() {
+  initContract: function() {
     try {
-      await $.getJSON('Token.json', data => {
-        App.contracts.Token = TruffleContract(data);
-        App.contracts.Token.setProvider(App.web3);
-      });
-
-      await $.getJSON('TokenCrowdSale.json', data => {
-        App.contracts.TokenCrowdSale = TruffleContract(data);
+      $.getJSON('TokenCrowdSale.json', crowdSale => {
+        App.contracts.TokenCrowdSale = TruffleContract(crowdSale);
         App.contracts.TokenCrowdSale.setProvider(App.web3);
-      });
-      debugger;
+        App.contracts.TokenCrowdSale.deployed().then(instance => {
+          console.log(`Token sale address: ${instance.address}`);
+        });
+      }).done(() => {
+        $.getJSON('Token.json', token => {
+          App.contracts.Token = TruffleContract(token);
+          App.contracts.Token.setProvider(App.web3);
+          App.contracts.Token.deployed().then(instance => {
+            console.log(`Token address: ${instance.address}`);
+          });
 
-      return App.tokenInfo();
+          App.listenForEvents();
+          return App.render();
+        });
+      });
     } catch (error) {
       alert('Contract를 불러오는데 실패했습니다.');
       console.error(error);
     }
   },
 
-  tokenInfo: async function() {
+  listenForEvents: function() {
+    App.contracts.TokenCrowdSale.deployed().then(instance => {
+      instance
+        .TokensPurchased(
+          {},
+          {
+            fromBlock: 0,
+            toBlock: 'latest',
+          }
+        )
+        .watch((err, evt) => {
+          console.log(`😎 Event triggered ${event}`);
+          App.render();
+        });
+    });
+  },
+
+  render: async function() {
+    if (App.loading) return;
+    App.loading = true;
+
+    $('#loader').show();
+    $('#content').hide();
+
+    /* Load account data */
+    web3.eth.getCoinbase((err, account) => {
+      if (!err) {
+        App.account = account;
+        $('#accountAddress').html(`Your account: ${account}`);
+      }
+    });
+
     const tokenInstance = await App.contracts.Token.deployed();
-    const crowdInstance = await App.contracts.TokenCrowdSale.deployed();
+    const crowdSaleInstance = await App.contracts.TokenCrowdSale.deployed();
 
-    const checkMinter = await tokenInstance.isMinter(crowdInstance.address);
-    if (!checkMinter) await tokenInstance.addMinter(crowdInstance.address);
-    debugger;
+    /* Token price */
+    const rate = await crowdSaleInstance.rate();
+    $('#token-price').html(web3.fromWei(rate.toNumber(), 'ether'));
 
-    return App.init(tokenInstance, crowdInstance);
+    /* Token sold */
+    const tokenSold = await crowdSaleInstance.weiRaised();
+    const cap = await crowdSaleInstance.cap();
+    $('#tokens-sold').html(tokenSold.toNumber());
+    $('#tokens-available').html(web3.fromWei(cap.toNumber(), 'ether'));
+    const progressPercent = (Math.ceil(tokenSold) / cap) * 100;
+    $('#progress').css('width', `${progressPercent}%`);
+
+    $('#loader').hide();
+    $('#content').show();
   },
 
   init: async function(tokenInstance, crowdInstance) {

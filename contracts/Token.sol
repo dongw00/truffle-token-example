@@ -26,7 +26,7 @@ contract Token is ERC20Detailed, ERC20Mintable {
 contract TokenCrowdSale is MintedCrowdsale, CappedCrowdsale, TimedCrowdsale {
   uint256 public _openingTime = now;
   uint256 public _closingTime = now + 5 days;
-  uint256 public constant _rate = 100;
+  uint256 public constant _rate = 10000000000000000;
   uint256 public constant _cap = 100000000000000000000000;
 
   constructor(

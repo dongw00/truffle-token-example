@@ -9,7 +9,7 @@ contract('TokenCrowdSale', function([_, wallet, investor1, investor2]) {
   const _symbol = 'BTT';
   const _decimals = new BN(18);
 
-  const _rate = new BN(100);
+  const _rate = new BN(10000000000000000);
 
   beforeEach(async () => {
     this.token = await ERC20.new();
@@ -52,30 +52,5 @@ contract('TokenCrowdSale', function([_, wallet, investor1, investor2]) {
     });
   });
 
-  describe('🔥 테스트 케이스 3: Mited crowd 컨트랙트가 올바르게 생성되었는가?', () => {
-    // it('3.1. 구매후에 올바르게 mint되는가?', async () => {
-    //   const originalTotalSupply = await this.token.totalSupply();
-    //   await this.crowdSale
-    //     .sendTransaction({
-    //       value: new BN(10 ** 18),
-    //       from: investor1,
-    //     })
-    //     .then((err, res) => {
-    //       console.log('transaction');
-    //       if (!err) console.log(res);
-    //       else console.log(err);
-    //     });
-
-    //   const newTotalSupply = await this.token.totalSupply();
-    //   assert.isTrue(newTotalSupply > originalTotalSupply);
-    // });
-    it('3.3. asdasd?', async () => {
-      await token.addMinter(this.crowdSale.address);
-      const result = await this.crowdSale.buyTokens(investor1, {
-        value: new BN(1),
-        from: investor1,
-      });
-      expect(result).to.be.fulfilled;
-    });
-  });
+  describe('🔥 테스트 케이스 3: Mited crowd 컨트랙트가 올바르게 생성되었는가?', () => {});
 });
