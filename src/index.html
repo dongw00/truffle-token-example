@@ -20,17 +20,39 @@
 
   <body>
     <div class="container">
-      <header class="mt-4">
-        <h1>ICO token sale</h1>
-        <h3>총 토큰 판매량</h3>
+      <header class="row mt-3">
+        <div class="col-7">
+          <h1>ICO token sale</h1>
+        </div>
+
+        <div class="col-2 mt-3">
+          <div class="card text-white bg-success">
+            <h5 class="card-header">
+              총 판매량
+            </h5>
+            <div class="card-body">
+              <p id="saleStatus"></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-2 mt-3 ml-2 mr-2">
+          <div class="card text-white bg-success">
+            <h5 class="card-header">
+              남은 수량
+            </h5>
+            <div class="card-body">
+              <p id="restStatus"></p>
+            </div>
+          </div>
+        </div>
       </header>
 
       <div class="row mt-5">
-        <div class="col-sm-6">
+        <div class="col-sm-6 mt-4">
           <div class="card">
-            <div class="card-header">
+            <h5 class="card-header">
               ICO 일정
-            </div>
+            </h5>
             <div class="card-body">
               <h5 class="card-title">현재 시각</h5>
               <p id="now" class="card-text"></p>
@@ -42,7 +64,7 @@
           </div>
         </div>
 
-        <div class="col-sm-6">
+        <div class="col-sm-6 mt-4">
           <div class="card">
             <div class="card-header">
               ICO token 구입
@@ -63,18 +85,18 @@
                 </div>
               </div>
 
-              <button type="button" class="btn btn-primary justify-content-end">
+              <button id="invest" type="button" class="btn btn-primary">
                 구입
               </button>
             </div>
           </div>
         </div>
 
-        <div class="col-sm-6">
+        <div class="col-sm-6 mt-4">
           <div class="card">
-            <div class="card-header">
+            <h5 class="card-header">
               Token 정보
-            </div>
+            </h5>
             <div class="card-body">
               <h5 class="card-title">토큰 이름</h5>
               <p id="token_name" class="cart-text"></p>
@@ -84,6 +106,21 @@
 
               <h5 class="card-title">총 발행량</h5>
               <p id="token_total" class="cart-text"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6 mt-4">
+          <div class="card">
+            <h5 class="card-header">
+              실시간 정보
+            </h5>
+            <div class="card-body">
+              <ul class="list-group">
+                <li class="list-group-item active">1번째</li>
+                <li class="list-group-item">2번째</li>
+                <li class="list-group-item">3번째</li>
+              </ul>
             </div>
           </div>
         </div>

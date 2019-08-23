@@ -4,46 +4,39 @@
 
 pragma solidity ^0.5.2;
 
-import 'openzeppelin-solidity/contracts/token/ERC20/ERC20.sol';
+/* Token */
+import '@openzeppelin/contracts/token/ERC20/ERC20Detailed.sol';
+import '@openzeppelin/contracts/token/ERC20/ERC20Mintable.sol';
 
-contract Token is ERC20 {
-  string public constant name = "bitToken";
-  string public constant symbol = "BTT";
-  uint public constant decimals = 18;
-  uint public constant INITIAL_SUPPLY = 1000000 * (10 ** decimals);
+/* CrowdSale */
+import '@openzeppelin/contracts/crowdsale/validation/CappedCrowdsale.sol';
+import '@openzeppelin/contracts/crowdsale/emission/MintedCrowdsale.sol';
+import '@openzeppelin/contracts/crowdsale/validation/TimedCrowdsale.sol';
 
-  /* Contract deployer */
-  address public owner;
+contract Token is ERC20Detailed, ERC20Mintable {
+  string public constant _name = "bitToken";
+  string public constant _symbol = "BTT";
+  uint256 public constant _INITIAL_SUPPLY = 10000000 * (10 ** 18);
 
-  /* ICO time */
-  uint public start;
-  uint public deadline;
-
-  /* ICO info */
-  uint public constant exchangeRate = 10;
-  uint idx; // ICO 참여자 수
-  uint saleStatus;
-
-  mapping (uint => address) investor;   // ICO 참여자
-
-  constructor() public {
-    owner = msg.sender;
-    _mint(msg.sender, INITIAL_SUPPLY);
-
-    start = now;
-    deadline = now + 1 days;
+  constructor() ERC20Detailed(_name, _symbol, 18) public {
+    _mint(msg.sender, _INITIAL_SUPPLY);
   }
+}
 
-  function invest() public payable {
-    require(now < deadline, "The token sale has ended.");
-    require(balanceOf(owner) >= msg.value * exchangeRate, "Not enough token sale amount");
+contract TokenCrowdSale is MintedCrowdsale, CappedCrowdsale, TimedCrowdsale {
+  uint256 public _openingTime = now;
+  uint256 public _closingTime = now + 5 days;
+  uint256 public constant _rate = 100;
+  uint256 public constant _cap = 100000000000000000000000;
 
-    transferFrom(owner, msg.sender, msg.value * exchangeRate);
+  constructor(
+    address payable _wallet,
+    ERC20Mintable token
+  ) public
+    Crowdsale(_rate, _wallet, token)
+    CappedCrowdsale(_cap)
+    TimedCrowdsale(_openingTime, _closingTime)
+    {
 
-    if (balanceOf(msg.sender) == 0) {
-      investor[idx++] = msg.sender;
     }
-
-    saleStatus.add(msg.value * exchangeRate);
-  }
 }
