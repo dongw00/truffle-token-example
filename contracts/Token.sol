@@ -16,19 +16,19 @@ import '@openzeppelin/contracts/crowdsale/emission/MintedCrowdsale.sol';
 contract Token is ERC20Detailed, ERC20Mintable {
   string public constant _name = "bitToken";
   string public constant _symbol = "BTT";
-  uint256 public constant _INITIAL_SUPPLY = 500000 * (10 ** 18);
+  uint256 public constant _INITIAL_SUPPLY = 50000 * (10 ** 18);
 
   constructor() ERC20Detailed(_name, _symbol, 18) public {
-    // _mint(msg.sender, _INITIAL_SUPPLY);
+    _mint(msg.sender, _INITIAL_SUPPLY);
   }
 }
 
 contract TokenCrowdSale is CappedCrowdsale, MintedCrowdsale {
   uint256 public constant _rate = 100;
-  uint256 public constant _cap = 10000000000000000000;
+  uint256 public constant _cap = 1000000000000000000000;
   constructor(
     address payable _wallet,
-    IERC20 token
+    ERC20Mintable token
   ) public
     Crowdsale(_rate, _wallet, token)
     CappedCrowdsale(_cap)

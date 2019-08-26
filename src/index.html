@@ -30,11 +30,15 @@
           <p class="text-center">Loading...</p>
         </div>
         <div id="content" class="text-center">
-          <p>
-            Introducing "Dapp Token" (Dapp)! Token price is
-            <span id="token-price"></span> Ether. <br />You currently have
-            <span id="dapp-balance"></span>
+          <h3>
+            Token rate is
+            <span id="token-price" class="text-primary"></span> per Ether.
+          </h3>
+          <p class="mt-3">
+            You currently have
+            <span id="dapp-balance" class="text-info font-weight-bold"></span>
           </p>
+
           <br />
           <form onSubmit="App.buyTokens(); return false;" role="form">
             <div class="form-group">

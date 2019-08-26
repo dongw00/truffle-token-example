@@ -13,13 +13,11 @@ contract('Token', function([sender, receiver]) {
   const _name = 'bitToken';
   const _symbol = 'BTT';
   const _decimals = new BN(18);
-  const _totalSupply = new BN('10').pow(new BN(23)).mul(new BN(5));
+  const _totalSupply = ether('50000');
 
   beforeEach(async () => {
     this.token = await ERC20.new();
     this.value = ether('1');
-
-    await this.token.mint(sender, _totalSupply);
   });
 
   describe('🔥 테스트 케이스 1: 토큰이 정확히 생성되었는가?', () => {

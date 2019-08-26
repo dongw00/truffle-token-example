@@ -70,7 +70,8 @@ App = {
           }
         )
         .watch((err, evt) => {
-          console.log(`😎 Event triggered ${event}`);
+          console.log(`😎 Event triggered`);
+          console.dir(evt);
           App.render();
         });
     });
@@ -94,24 +95,21 @@ App = {
     const tokenInstance = await App.contracts.Token.deployed();
     const crowdSaleInstance = await App.contracts.TokenCrowdSale.deployed();
 
-    debugger;
-
     /* Token price */
-    App.tokenPrice = await crowdSaleInstance.rate();
-    $('#token-price').html(web3.fromWei(App.tokenPrice.toNumber(), 'ether'));
+    const rate = (await crowdSaleInstance.rate()).toNumber();
+    const tokenPrice = (1 / rate) * web3.toWei(1, 'ether');
+    $('#token-price').html(web3.fromWei(tokenPrice, 'ether'));
 
     /* My token balance */
     const symbol = await tokenInstance.symbol();
-    const balance = await tokenInstance.balanceOf(App.account);
-    $('#dapp-balance').html(
-      `${web3.fromWei(balance.toNumber(), 'ether')} ${symbol}`
-    );
+    const balance = (await tokenInstance.balanceOf(App.account)).toString();
+    $('#dapp-balance').html(`${web3.fromWei(balance, 'ether')} ${symbol}`);
 
     /* Token sold */
-    const tokenSold = await crowdSaleInstance.weiRaised();
-    const cap = await crowdSaleInstance.cap();
-    $('#tokens-sold').html(tokenSold.toNumber());
-    $('#tokens-available').html(web3.fromWei(cap.toNumber(), 'ether'));
+    const tokenSold = (await crowdSaleInstance.weiRaised()).toString();
+    const cap = (await crowdSaleInstance.cap()).toString();
+    $('#tokens-sold').html(web3.fromWei(tokenSold, 'ether'));
+    $('#tokens-available').html(web3.fromWei(cap, 'ether'));
 
     /* ICO progress status */
     const progressPercent = (Math.ceil(tokenSold) / cap) * 100;
@@ -127,12 +125,12 @@ App = {
     $('#content').hide();
 
     const tokenValue = $('#numberOfTokens').val();
+
     App.contracts.TokenCrowdSale.deployed().then(instance => {
       return instance
-        .buyTokens(tokenValue, {
+        .buyTokens(App.account, {
           from: App.account,
-          value: tokenValue * App.tokenPrice,
-          gas: 500000,
+          value: web3.toWei(tokenValue, 'ether'),
         })
         .then(res => {
           alert('토큰을 구매하였습니다.');
