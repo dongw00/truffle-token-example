@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+const web3 = require('web3');
+
 const HDWalletProvider = require('truffle-hdwallet-provider');
 const INFURA_KEY = process.env.INFURA_PROJECT_ID;
 

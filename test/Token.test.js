@@ -1,21 +1,25 @@
-const { BN, ether } = require('openzeppelin-test-helpers');
+const {
+  BN,
+  expectRevert,
+  expectEvent,
+  constants,
+  ether,
+} = require('openzeppelin-test-helpers');
 const { expect } = require('chai');
 
 const ERC20 = artifacts.require('Token');
-const TokenCrowdSale = artifacts.require('TokenCrowdSale');
 
-contract('TokenCrowdSale', function([_, wallet, investor1, investor2]) {
+contract('Token', function([sender, receiver]) {
   const _name = 'bitToken';
   const _symbol = 'BTT';
   const _decimals = new BN(18);
-
-  const _rate = new BN(10000000000000000);
+  const _totalSupply = new BN('10').pow(new BN(23)).mul(new BN(5));
 
   beforeEach(async () => {
     this.token = await ERC20.new();
-    this.wallet = wallet;
+    this.value = ether('1');
 
-    this.crowdSale = await TokenCrowdSale.new(this.wallet, this.token.address);
+    await this.token.mint(sender, _totalSupply);
   });
 
   describe('🔥 테스트 케이스 1: 토큰이 정확히 생성되었는가?', () => {
@@ -30,27 +34,42 @@ contract('TokenCrowdSale', function([_, wallet, investor1, investor2]) {
     });
 
     it('1.3. 토큰의 소수점이 올바르게 생성되었는가?', async () => {
-      const toKenDecimals = await this.token.decimals();
-      expect(toKenDecimals).to.be.bignumber.equal(_decimals);
+      const tokenDecimals = await this.token.decimals();
+      expect(tokenDecimals).to.be.bignumber.equal(_decimals);
+    });
+
+    it('1.4. 토큰의 총 발행량에 해당하는 만큼 생성되었는가?', async () => {
+      const totalSupply = (await this.token.totalSupply()).toString();
+      expect(totalSupply).to.equal(_totalSupply.toString());
     });
   });
 
-  describe('🔥 테스트 케이스 2: Crowd 컨트랙트가 올바르게 생성되었는가?', () => {
-    it('2.1. 토큰과 이더 교환 비율은 올바른가?', async () => {
-      const tokenRate = await this.crowdSale.rate();
-      expect(tokenRate).to.be.bignumber.equal(_rate);
+  describe('🔥 테스트 케이스 2: 토큰의 트랜잭션이 정상적으로 발생되는가?', () => {
+    it('2.1. 토큰이 정상적이지 않은 0 주소로 보냈을때 반환되는가?', async () => {
+      await expectRevert(
+        this.token.transfer(constants.ZERO_ADDRESS, this.value, {
+          from: sender,
+        }),
+        'ERC20: transfer to the zero address'
+      );
     });
 
-    it('2.2. 토큰의 wallet이 올바르게 생성되었는가?', async () => {
-      const tokenWallet = await this.crowdSale.wallet();
-      expect(tokenWallet).to.equal(this.wallet);
+    it('2.2. 토큰 전송을 한 경우 transfer 이벤트가 발생하는가?', async () => {
+      const { logs } = await this.token.transfer(receiver, this.value, {
+        from: sender,
+      });
+      expectEvent.inLogs(logs, 'Transfer', {
+        from: sender,
+        to: receiver,
+        value: this.value,
+      });
     });
 
-    it('2.3. ICO 토큰이 올바르게 생성 되었는가?', async () => {
-      const token = await this.crowdSale.token();
-      expect(token).to.equal(token);
+    it('2.3. 토큰 전송을 한 후 잔고가 정상적으로 반영이 되는가?', async () => {
+      await this.token.transfer(receiver, this.value, { from: sender });
+      expect(await this.token.balanceOf(receiver)).to.be.bignumber.equal(
+        this.value
+      );
     });
   });
-
-  describe('🔥 테스트 케이스 3: Mited crowd 컨트랙트가 올바르게 생성되었는가?', () => {});
 });
