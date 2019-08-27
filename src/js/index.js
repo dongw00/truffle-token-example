@@ -4,6 +4,7 @@ App = {
   account: '0x0',
   loading: false,
   tokenPrice: 0,
+  instance: {},
 
   initWeb3: async function() {
     if (window.ethereum) {
@@ -22,14 +23,10 @@ App = {
     }
     // 지원하지 않는 Browser
     else {
-      console.log('Connected Ganache server');
-      App.web3Provider = new Web3.providers.HttpProvider(
-        'http://localhost:7545'
-      );
+      alert('Not support Browser');
     }
 
     web3 = new Web3(App.web3);
-
     return App.initContract();
   },
 
@@ -48,7 +45,6 @@ App = {
           App.contracts.Token.deployed().then(instance => {
             console.log(`Token address: ${instance.address}`);
           });
-
           App.listenForEvents();
           return App.render();
         });
@@ -60,8 +56,8 @@ App = {
   },
 
   listenForEvents: function() {
-    App.contracts.TokenCrowdSale.deployed().then(instance => {
-      instance
+    App.contracts.TokenCrowdSale.deployed().then(crowdSale => {
+      crowdSale
         .TokensPurchased(
           {},
           {
@@ -69,11 +65,19 @@ App = {
             toBlock: 'latest',
           }
         )
-        .watch((err, evt) => {
-          console.log(`😎 Event triggered`);
-          console.dir(evt);
-          App.render();
-        });
+        .watch((err, evt) => App.render());
+
+      App.contracts.Token.deployed().then(async token => {
+        const isMinter = await token.isMinter(crowdSale.address);
+
+        if (!isMinter) {
+          await token.addMinter(crowdSale.address);
+          await token.renounceMinter();
+
+          const cap = (await crowdSaleInstance.cap()).toString();
+          await crowdSale.send(cap);
+        }
+      });
     });
   },
 
@@ -85,12 +89,8 @@ App = {
     $('#content').hide();
 
     /* Load account data */
-    web3.eth.getCoinbase((err, account) => {
-      if (!err) {
-        App.account = account;
-        $('#accountAddress').html(`Your account: ${account}`);
-      }
-    });
+    App.account = await web3.eth.defaultAccount;
+    $('#accountAddress').text(`Your Account is ${App.account}`);
 
     const tokenInstance = await App.contracts.Token.deployed();
     const crowdSaleInstance = await App.contracts.TokenCrowdSale.deployed();
@@ -120,14 +120,14 @@ App = {
     $('#content').show();
   },
 
-  buyTokens: async function() {
+  buyTokens: function() {
     $('#loader').show();
     $('#content').hide();
 
     const tokenValue = $('#numberOfTokens').val();
 
-    App.contracts.TokenCrowdSale.deployed().then(instance => {
-      return instance
+    App.contracts.TokenCrowdSale.deployed().then(async instance => {
+      await instance
         .buyTokens(App.account, {
           from: App.account,
           value: web3.toWei(tokenValue, 'ether'),

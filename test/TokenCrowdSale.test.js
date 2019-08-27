@@ -16,9 +16,7 @@ contract('TokenCrowdSale', function([deployer, wallet, investor1, investor2]) {
 
   beforeEach(async () => {
     this.token = await ERC20.new({ from: deployer });
-    this.crowdSale = await TokenCrowdSale.new(wallet, this.token.address, {
-      from: deployer,
-    });
+    this.crowdSale = await TokenCrowdSale.new(wallet, this.token.address);
 
     await this.token.addMinter(this.crowdSale.address, { from: deployer });
     await this.token.renounceMinter({ from: deployer });
@@ -44,13 +42,19 @@ contract('TokenCrowdSale', function([deployer, wallet, investor1, investor2]) {
       const tokenCap = (await this.crowdSale.cap()).toString();
       expect(new BN(tokenCap)).to.be.bignumber.equal(cap);
     });
+
+    it('1.5. Crowd 컨트랙트가 minter 권한을 가지고 있는가?', async () => {
+      const isMinter = await this.token.isMinter(this.crowdSale.address);
+      expect(isMinter).to.be.true;
+    });
   });
 
   describe('🔥 테스트 케이스 2: Crowd 컨트랙트가 올바르게 동작되는가?', () => {
     it('2.1. Crowd 컨트랙트에서 토큰 구입이 정상적으로 동작되는가?', async () => {
-      const investmentAmount = new BN(1);
+      const investmentAmount = ether('0.01');
       const expectedTokenAmount = rate.mul(investmentAmount);
 
+      await this.crowdSale.send(investmentAmount);
       await this.crowdSale.buyTokens(investor1, {
         value: investmentAmount,
         from: investor1,
@@ -58,16 +62,11 @@ contract('TokenCrowdSale', function([deployer, wallet, investor1, investor2]) {
 
       const expectedBalance = await this.token.balanceOf(investor1);
       expect(expectedBalance).to.be.bignumber.equal(expectedTokenAmount);
-
-      const expectedTotalSupply = await this.token.totalSupply();
-      expect(expectedTotalSupply).to.be.bignumber.equal(
-        expectedTokenAmount.add(tokenSupply)
-      );
     });
 
     it('2.2. Crowd 컨트랙트에서 토큰 cap 범위에서만 구입이 되는가?', async () => {
-      await this.crowdSale.buyTokens(investor1, {
-        from: investor1,
+      await this.crowdSale.buyTokens(investor2, {
+        from: investor2,
         value: cap,
       });
       await expectRevert(

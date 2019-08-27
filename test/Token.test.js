@@ -9,15 +9,16 @@ const { expect } = require('chai');
 
 const ERC20 = artifacts.require('Token');
 
-contract('Token', function([sender, receiver]) {
-  const _name = 'bitToken';
-  const _symbol = 'BTT';
+contract('Token', function([deployer, sender, receiver]) {
+  const _name = 'DongToken';
+  const _symbol = 'DTT';
   const _decimals = new BN(18);
-  const _totalSupply = ether('50000');
 
   beforeEach(async () => {
     this.token = await ERC20.new();
     this.value = ether('1');
+
+    await this.token.mint(sender, ether('100'), { from: deployer });
   });
 
   describe('🔥 테스트 케이스 1: 토큰이 정확히 생성되었는가?', () => {
@@ -34,11 +35,6 @@ contract('Token', function([sender, receiver]) {
     it('1.3. 토큰의 소수점이 올바르게 생성되었는가?', async () => {
       const tokenDecimals = await this.token.decimals();
       expect(tokenDecimals).to.be.bignumber.equal(_decimals);
-    });
-
-    it('1.4. 토큰의 총 발행량에 해당하는 만큼 생성되었는가?', async () => {
-      const totalSupply = (await this.token.totalSupply()).toString();
-      expect(totalSupply).to.equal(_totalSupply.toString());
     });
   });
 

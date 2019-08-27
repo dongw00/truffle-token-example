@@ -14,12 +14,12 @@ import '@openzeppelin/contracts/crowdsale/emission/MintedCrowdsale.sol';
 
 
 contract Token is ERC20Detailed, ERC20Mintable {
-  string public constant _name = "bitToken";
-  string public constant _symbol = "BTT";
+  string public constant _name = "DongToken";
+  string public constant _symbol = "DTT";
   uint256 public constant _INITIAL_SUPPLY = 50000 * (10 ** 18);
 
   constructor() ERC20Detailed(_name, _symbol, 18) public {
-    _mint(msg.sender, _INITIAL_SUPPLY);
+    // _mint(msg.sender, _INITIAL_SUPPLY);
   }
 }
 
