@@ -76,6 +76,6 @@ contract('TokenCrowdSale', function([deployer, wallet, investor1, investor2]) {
         }),
         'CappedCrowdsale: cap exceeded'
       );
-    });
+    });  
   });
 });
